@@ -1,24 +1,18 @@
 Rails.application.routes.draw do
-  get "posts/index"
-  get "posts/show"
-  get "posts/new"
-  get "posts/create"
-  get "posts/edit"
-  get "posts/update"
-  get "posts/destroy"
-resources :posts do
-  resources :comments, only: [:create, :destroy]
-end
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+  root "home#index"  # トップページをhome#indexに設定
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+  # postsに関するすべてのルーティングをまとめる
+  resources :posts
+
+  # commentsはpostsにネストさせたままにする
+  resources :posts do
+    resources :comments, only: [:create, :destroy]
+  end
+
+  # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/*
+  # PWA関連の設定
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end
